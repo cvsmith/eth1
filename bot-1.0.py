@@ -68,7 +68,7 @@ class Stock:
         if self.size <= -10:
             return 4 + abs(self.size)//5
         elif self.size >= 10:
-            return 2
+            return 3
         else:
             return 5
     
@@ -76,9 +76,9 @@ class Stock:
         if self.size >= 10:
             return 4 + self.size//5 
         elif self.size <= 10:
-            return 2
+            return 3
         else:
-            return 2
+            return 5
     def highest_buy(self):
         largest = 0
         for order in self.orders:
@@ -87,9 +87,9 @@ class Stock:
         return largest
 
     def smallest_sell(self):
-        smallest = 10000000000000000000000000
+        smallest = None
         for order in self.orders:
-            if order["price"] < smallest and order["dir"] == "SELL":
+            if smallest == None or order["price"] < smallest and order["dir"] == "SELL":
                 smallest = order["price"]
         return smallest
 
@@ -97,15 +97,14 @@ class Stock:
 stocks = dict()
 
 def hedgeXLF(size, way):
-    for x in xrange(size):
-        #buy 3 bond
-        send_offer(way, "BOND", 1000, 3)
-        #buy 2 GS
-        send_offer(way, "GS", stocks["GS"].mid, 2)
-        #buy 3 MS
-        send_offer(way, "MS", stocks["MS"].mid, 3)
-        #buy 2 WFC
-        send_offer(way, "WFC", stocks["WFC"].mid, 2)
+     #buy 3 bond
+     send_offer(way, "BOND", 1000, size//3)
+     #buy 2 GS
+     send_offer(way, "GS", stocks["GS"].mid, size//2)
+     #buy 3 MS
+     send_offer(way, "MS", stocks["MS"].mid, size//3)
+     #buy 2 WFC
+     send_offer(way, "WFC", stocks["WFC"].mid, size//2)
 
 def send_cancel(order_id):
     s.send(json.dumps({"type":"cancel", "order_id": order_id}))
