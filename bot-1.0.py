@@ -57,10 +57,11 @@ for line in readlines(s):
         
         buy = dict()
         sell = dict()
-        size = 5
+        buy_size = 5
+        sell_size = 7
         #format is (type (ADD), order_id, symbol, dir (sell or SELL), price, size)
-        buy = {"type": "add", "order_id": sym + "B" + buy_price, "symbol": "sym", "dir": "BUY", "price": buy_price, "size": size}
-        sell = {"type": "add", "order_id": sym + "S" + sell_price, "symbol": "sym", "dir": "sell", "price": sell_price, "size": size}
+        buy = {"type": "add", "order_id": sym + "B" + buy_price, "symbol": "sym", "dir": "BUY", "price": buy_price, "size": buy_size}
+        sell = {"type": "add", "order_id": sym + "S" + sell_price, "symbol": "sym", "dir": "sell", "price": sell_price, "size": sell_size}
 
         s.send(json.loads(buy))
         s.send(json.loads(sell))
