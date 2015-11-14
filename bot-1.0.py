@@ -160,17 +160,7 @@ for line in readlines(s):
                 stocks[sym].update_spread()
         else:
             stocks[sym] = Stock(sym, best_buy, best_sell)
-'''            
-        if sym == "BOND":
-            # If best buy is less than 999, offer 1 penny greater
-            if stocks[sym].best_buy < 999: 
-                buy_price = stocks[sym].best_buy + 1
-                send_offer("BUY", sym, buy_price, 10)
-            # If best sell is greater than 1001, offer 1 penny less
-            if stocks[sym].best_sell > 1001: 
-                sell_price = stocks[sym].best_sell - 1
-                send_offer("SELL", sym, sell_price, 10)    
-'''                
+           
         if  sym == "XLF":
             # Calculate fair value from other bids
             if ("GS" in stocks.keys() and 
@@ -191,6 +181,17 @@ for line in readlines(s):
                     send_offer("SELL", sym, sell_price, size)
                     hedgeXLF(size, "BUY")
                 stocks[sym].clean(fair_value)
+'''            
+        if sym == "BOND":
+            # If best buy is less than 999, offer 1 penny greater
+            if stocks[sym].best_buy < 999: 
+                buy_price = stocks[sym].best_buy + 1
+                send_offer("BUY", sym, buy_price, 10)
+            # If best sell is greater than 1001, offer 1 penny less
+            if stocks[sym].best_sell > 1001: 
+                sell_price = stocks[sym].best_sell - 1
+                send_offer("SELL", sym, sell_price, 10)    
+'''     
 '''        elif sym == "VALE":
             if "VALBZ" in stocks.keys():
                 fair_value = stocks["VALBZ"].mid
