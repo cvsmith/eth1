@@ -1,7 +1,7 @@
 import json
 import socket
 
-TCP_IP = '10.0.102.124'
+TCP_IP = 'production'#'10.0.102.124'
 TCP_PORT = 25000
 BUFFER_SIZE = 1024
 
@@ -53,8 +53,8 @@ class Stock:
     def clean(self, new_fair):
         for x in xrange(len(self.orders)):
             for order in self.orders:
-                print type(order)
-                print order
+              #  print type(order)
+              #  print order
                 if (order["dir"] == "BUY" and 
                     order["price"] >= new_fair):
                     send_cancel(order["order_id"])
@@ -65,14 +65,16 @@ class Stock:
                     self.orders.pop(self.order.index(order))
 
     def buy_size(self):
-        if self.size <= -10:
+        return 6
+        if self.size <= -70:
             return 4 + abs(self.size)//5
-        elif self.size >= 10:
+        elif self.size >= 70:
             return 3
         else:
             return 5
     
     def sell_size(self):
+        return 6
         if self.size >= 10:
             return 4 + self.size//5 
         elif self.size <= 10:
@@ -98,7 +100,7 @@ stocks = dict()
 
 def hedgeXLF(size, way):
      #buy 3 bond
-     send_offer(way, "BOND", 1000, size//3)
+     #send_offer(way, "BOND", 1000, size//3)
      #buy 2 GS
      send_offer(way, "GS", stocks["GS"].mid, size//2)
      #buy 3 MS
@@ -118,7 +120,7 @@ def send_offer(way, sym, price, size):
              "dir": way, 
              "price": price, 
              "size": size}
-    print offer, "this is in send offer"
+   # print offer, "this is in send offer"
     stocks[sym].orders.append(offer)
     s.send(json.dumps(offer))
     s.send("\n")
@@ -168,19 +170,21 @@ for line in readlines(s):
                 fair_value = (3000 + 
                              2 * stocks["GS"].mid + 
                              3 * stocks["MS"].mid +
-                             2 * stocks["WFC"].mid)
+                             2 * stocks["WFC"].mid) / 10
                 if fair_value > stocks["XLF"].mid and stocks["XLF"].highest_buy() < best_buy:
                     buy_price = stocks[sym].best_buy + 1
                     size = stocks[sym].buy_size()
                     send_offer("BUY", sym, buy_price, size)
                     hedgeXLF(size, "SELL")
-                elif fair_value < stocks["XLF"].mid and stocks["XLF"].smallest_sell() > best_sell:
+                #print "fair_value:", fair_value, "mid:", stocks["XLF"].mid, "smallest:", stocks["XLF"].smallest_sell(), "best:",best_sell
+                if fair_value < stocks["XLF"].mid and stocks["XLF"].smallest_sell() > best_sell:
+                 #   print "we sellin"
                     size = stocks[sym].sell_size()
                     sell_price = stocks[sym].best_sell - 1
                     send_offer("SELL", sym, sell_price, size)
                     hedgeXLF(size, "BUY")
                 stocks[sym].clean(fair_value)
-'''            
+            
         if sym == "BOND":
             # If best buy is less than 999, offer 1 penny greater
             if stocks[sym].best_buy < 999: 
@@ -190,7 +194,7 @@ for line in readlines(s):
             if stocks[sym].best_sell > 1001: 
                 sell_price = stocks[sym].best_sell - 1
                 send_offer("SELL", sym, sell_price, 10)    
-'''     
+     
 '''        elif sym == "VALE":
             if "VALBZ" in stocks.keys():
                 fair_value = stocks["VALBZ"].mid
